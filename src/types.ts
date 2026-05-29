@@ -9,10 +9,13 @@ export interface Task {
   createdAt: string;
 }
 
+
 export interface Note {
   id: string;
   title: string;
   content: string;
+  section: 'notes' | 'ideas' | 'journal';
+  date?: string; // for journal daily pages
   createdAt: string;
   updatedAt: string;
 }
@@ -26,9 +29,10 @@ export interface Idea {
   createdAt: string;
 }
 
+
 export interface JournalEntry {
   id: string;
-  date: string;
+  date: string; // YYYY-MM-DD
   content: string;
   mood?: string;
   createdAt: string;
@@ -48,12 +52,13 @@ export interface Project {
   updatedAt: string;
 }
 
+
 export interface Learning {
   id: string;
-  topic: string;
+  topic: string; // what are they learning about
   resource: string;
   prerequisites: string;
-  notes: string;
+  notes?: string;
   completedAt?: string;
   createdAt: string;
 }
