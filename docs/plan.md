@@ -105,6 +105,17 @@ Help users consistently execute habits, tasks, and personal projects by combinin
 - Suggest reminder distribution for habits (example: split 3L water into timed reminders).
 - Privacy boundary: user data remains local in initial phase.
 
+### AI Use Cases
+
+- Daily planning and prioritization: recommend top tasks, suggest overdue items to move to today, and turn notes into action steps.
+- Idea-to-project conversion: draft project plans, milestones, and next steps from idea cards.
+- Habit guidance: detect habit completion patterns, suggest timing, and recommend reminder distribution.
+- Learning-to-project alignment: map learning resources to active projects and suggest relevant next topics.
+- Journal reflection: summarize journal entries, highlight themes, and suggest weekly review insights.
+- Smart rescheduling: recommend better dates based on priority, deadlines, and completion history.
+- Progress insights: identify streak strength, completion trends, and realistic targets for upcoming days.
+- Notes synthesis: summarize longer notes, extract action items, and turn ideas into concise plans.
+
 ### Alarms and Background Reminder Service
 
 - App runs a lightweight background scheduler for notifications/alarms.
