@@ -1,49 +1,55 @@
-// PieChart component stub
-// Simple SVG Pie Chart for completion stats
+import type { Task } from "../../types";
+
 interface PieChartProps {
-  percent?: number;
+  tasks: Task[];
 }
 
-export default function PieChart({ percent = 72 }: PieChartProps) {
-  const radius = 60;
-  const stroke = 16;
-  const normalizedRadius = radius - stroke / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+export default function PieChart({ tasks }: PieChartProps) {
+  const total = tasks.length;
+  const done = tasks.filter((t) => t.completed).length;
+  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+  const radius = 56;
+  const stroke = 14;
+  const r = radius - stroke / 2;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference - (percent / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center py-4">
-      <svg height={radius * 2} width={radius * 2}>
+    <div className="flex items-center gap-6 py-2">
+      <svg height={radius * 2} width={radius * 2} className="shrink-0 overflow-visible">
+        <circle stroke="var(--muted)" fill="transparent" strokeWidth={stroke} r={r} cx={radius} cy={radius} />
         <circle
-          stroke="#334155"
+          stroke="var(--primary)"
           fill="transparent"
           strokeWidth={stroke}
-          r={normalizedRadius}
+          strokeDasharray={`${circumference} ${circumference}`}
+          style={{ strokeDashoffset: offset, transition: "stroke-dashoffset 0.5s ease" }}
+          strokeLinecap="round"
+          r={r}
           cx={radius}
           cy={radius}
+          transform={`rotate(-90 ${radius} ${radius})`}
         />
-        <circle
-          stroke="#10b981"
-          fill="transparent"
-          strokeWidth={stroke}
-          strokeDasharray={circumference + ' ' + circumference}
-          style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.5s' }}
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-        />
-        <text
-          x="50%"
-          y="50%"
-          textAnchor="middle"
-          dy="0.3em"
-          fontSize="2rem"
-          fill="#fff"
-        >
+        <text x="50%" y="50%" textAnchor="middle" dy="0.35em" fontSize="1.1rem" fontWeight="700" fill="var(--foreground)">
           {percent}%
         </text>
       </svg>
-      <div className="mt-2 text-slate-400 text-sm">Completion</div>
+
+      <div className="space-y-1">
+        <p className="text-base font-semibold text-card-foreground">Completion</p>
+        <p className="text-sm text-muted-foreground">{done} of {total} tasks done</p>
+        <div className="flex gap-3 text-xs text-muted-foreground mt-2">
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-2 h-2 rounded-full bg-primary" />
+            Done
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-2 h-2 rounded-full bg-muted" />
+            Remaining
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -3,7 +3,9 @@ export interface Task {
   title: string;
   description: string;
   dueDate: string;
-  timing?: string; // e.g., "14:00" or "14:00-15:00"
+  timing?: string;
+  type?: string;
+  repeat?: string;
   priority: "high" | "medium" | "low";
   completed: boolean;
   createdAt: string;

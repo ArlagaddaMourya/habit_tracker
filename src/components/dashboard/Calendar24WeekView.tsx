@@ -1,10 +1,8 @@
-// Calendar24WeekView.tsx
 import { useState } from "react";
 import type { Task } from "../../types";
 
 const hours = Array.from({ length: 24 }, (_, i) => i);
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
 
 interface Calendar24WeekViewProps {
   tasks: Task[];
@@ -21,55 +19,61 @@ function getWeekDates(startDate: Date) {
 }
 
 export default function Calendar24WeekView({ tasks }: Calendar24WeekViewProps) {
-  const [scrollHour, setScrollHour] = useState(8);
+  const [_scrollHour] = useState(8);
   const today = new Date();
-  today.setDate(today.getDate() - today.getDay() + 1); // Monday as start
+  today.setDate(today.getDate() - today.getDay() + 1);
   const weekDates = getWeekDates(today);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex gap-2">
-        {/* Day headers */}
-        <div className="w-12" />
-        {days.map((day, i) => (
-          <div key={day} className="flex-1 text-center font-semibold text-slate-200 py-2">
-            {day}
-            <div className="text-xs text-slate-400">{weekDates[i]}</div>
-          </div>
-        ))}
+    <div>
+      <div className="mb-3">
+        <p className="text-xs text-muted-foreground">Calendar</p>
+        <h3 className="mt-1 text-lg font-semibold text-card-foreground">Week View (24h)</h3>
       </div>
-      <div className="flex">
-        {/* Hour labels */}
-        <div className="flex flex-col w-12">
-          {hours.map((h) => (
-            <div key={h} className="h-10 text-xs text-slate-400 text-right pr-1 py-1 border-b border-slate-800">
-              {h}:00
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="flex min-w-[600px]">
+          <div className="w-12 shrink-0" />
+          {days.map((day, i) => (
+            <div key={day} className="flex-1 text-center py-2 border-b border-border">
+              <p className="text-xs font-semibold text-card-foreground">{day}</p>
+              <p className="text-xs text-muted-foreground">{weekDates[i]?.slice(5)}</p>
             </div>
           ))}
         </div>
-        {/* Calendar grid */}
-        {weekDates.map((date, colIdx) => (
-          <div key={date} className="flex-1 flex flex-col">
-            {hours.map((h) => {
-              const timeStr = h.toString().padStart(2, "0") + ":00";
-              const task = tasks.find(
-                (t) => t.dueDate === date && t.timing && t.timing.startsWith(timeStr)
-              );
-              return (
-                <div
-                  key={h}
-                  className={`h-10 border-b border-slate-800 relative ${task ? "bg-emerald-400/30" : ""}`}
-                >
-                  {task && (
-                    <div className="absolute left-0 right-0 top-0 bottom-0 bg-emerald-400/80 text-slate-900 rounded px-1 flex items-center text-xs font-semibold">
-                      {task.title}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        <div className="flex min-w-[600px]">
+          <div className="flex flex-col w-12 shrink-0">
+            {hours.map((h) => (
+              <div
+                key={h}
+                className="h-10 text-xs text-muted-foreground text-right pr-2 py-1 border-b border-border"
+              >
+                {h.toString().padStart(2, "0")}
+              </div>
+            ))}
           </div>
-        ))}
+          {weekDates.map((date) => (
+            <div key={date} className="flex-1 flex flex-col">
+              {hours.map((h) => {
+                const timeStr = h.toString().padStart(2, "0") + ":00";
+                const task = tasks.find(
+                  (t) => t.dueDate === date && t.timing && t.timing.startsWith(timeStr)
+                );
+                return (
+                  <div
+                    key={h}
+                    className={`h-10 border-b border-border relative ${task ? "bg-primary/15" : ""}`}
+                  >
+                    {task && (
+                      <div className="absolute inset-0 bg-primary/80 text-primary-foreground rounded-sm mx-0.5 px-1 flex items-center text-xs font-medium truncate">
+                        {task.title}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

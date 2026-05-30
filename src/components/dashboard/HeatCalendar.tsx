@@ -1,6 +1,3 @@
-// HeatCalendar component stub
-
-
 import { useMemo } from "react";
 import type { Task } from "../../types";
 
@@ -8,7 +5,6 @@ interface HeatCalendarProps {
   tasks: Task[];
 }
 
-// Helper to get the start of the week (Sunday)
 function getStartOfWeek(date: Date) {
   const d = new Date(date);
   d.setDate(d.getDate() - d.getDay());
@@ -16,7 +12,6 @@ function getStartOfWeek(date: Date) {
   return d;
 }
 
-// Helper to get all days in the last 12 months (like GitHub)
 function getCalendarMatrix() {
   const today = new Date();
   const start = new Date(today);
@@ -41,7 +36,6 @@ function getDayKey(date: Date) {
 }
 
 export default function HeatCalendar({ tasks }: HeatCalendarProps) {
-  // Map date string to activity count
   const activityMap = useMemo(() => {
     const map: Record<string, number> = {};
     tasks.forEach((task) => {
@@ -52,19 +46,18 @@ export default function HeatCalendar({ tasks }: HeatCalendarProps) {
 
   const weeks = useMemo(() => getCalendarMatrix(), []);
 
-  // Color scale (GitHub style)
-  function getColor(count: number) {
-    if (count >= 4) return "bg-emerald-500";
-    if (count === 3) return "bg-emerald-400";
-    if (count === 2) return "bg-emerald-300";
-    if (count === 1) return "bg-emerald-200";
-    return "bg-slate-800";
+  function getCellClass(count: number) {
+    if (count >= 4) return "bg-primary";
+    if (count === 3) return "bg-primary/80";
+    if (count === 2) return "bg-primary/55";
+    if (count === 1) return "bg-primary/30";
+    return "bg-muted";
   }
 
   return (
     <div>
-      <h4 className="text-lg font-semibold mb-2 text-white">Activity Heat Map</h4>
-      <div className="flex gap-1">
+      <h4 className="text-base font-semibold mb-3 text-card-foreground">Activity Heat Map</h4>
+      <div className="flex gap-1 overflow-x-auto pb-1">
         {weeks.map((week, colIdx) => (
           <div key={colIdx} className="flex flex-col gap-1">
             {week.map((date, rowIdx) => {
@@ -74,14 +67,14 @@ export default function HeatCalendar({ tasks }: HeatCalendarProps) {
                 <div
                   key={rowIdx}
                   title={`${key}: ${count} activities`}
-                  className={`w-4 h-4 rounded-sm border border-slate-900 ${getColor(count)}`}
+                  className={`w-3 h-3 rounded-sm ${getCellClass(count)}`}
                 />
               );
             })}
           </div>
         ))}
       </div>
-      <div className="mt-2 text-xs text-slate-400">GitHub-style: darker = more activity</div>
+      <p className="mt-2 text-xs text-muted-foreground">Darker = more activity</p>
     </div>
   );
 }
