@@ -17,6 +17,8 @@ import type { Task } from "./types";
 import PieChart from "./components/dashboard/PieChart";
 import TodaysTasks from "./components/dashboard/TodaysTasks";
 import HeatCalendar from "./components/dashboard/HeatCalendar";
+import StatsCards from "./components/dashboard/StatsCards";
+import AllTasks from "./components/dashboard/AllTasks";
 import Calendar24WeekView from "./components/dashboard/Calendar24WeekView";
 import AddTaskModal from "./components/dashboard/AddTaskModal";
 import Notepad from "./components/notepad/Notepad";
@@ -146,14 +148,18 @@ function App() {
             )}
 
             {dbReady && activePage === "Dashboard" && (
-              <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
-                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                  <PieChart tasks={tasks} />
-                  <TodaysTasks tasks={tasks} onToggle={handleToggleTask} />
+              <div className="space-y-4">
+                <StatsCards tasks={tasks} />
+                <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
+                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                    <PieChart tasks={tasks} />
+                    <TodaysTasks tasks={tasks} onToggle={handleToggleTask} />
+                  </div>
+                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                    <HeatCalendar tasks={tasks} />
+                  </div>
                 </div>
-                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                  <HeatCalendar tasks={tasks} />
-                </div>
+                <AllTasks tasks={tasks} onToggle={handleToggleTask} />
               </div>
             )}
 

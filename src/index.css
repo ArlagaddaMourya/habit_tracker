@@ -76,6 +76,12 @@
   --chart-4: #FCDEC0;
   --chart-5: #a06b5a;
   --radius: 0.625rem;
+  /* Heat map */
+  --heat-0: #e8e8e8;
+  --heat-1: #9be9a8;
+  --heat-2: #40c463;
+  --heat-3: #30a14e;
+  --heat-4: #216e39;
   --sidebar: #B4846C;
   --sidebar-foreground: #FCDEC0;
   --sidebar-primary: #FCDEC0;
@@ -96,15 +102,15 @@
   --popover-foreground: #BBE1FA;
   --primary: #3282B8;
   --primary-foreground: #BBE1FA;
-  --secondary: #0F4C75;
+  --secondary: #163251;
   --secondary-foreground: #BBE1FA;
-  --muted: #0F4C75;
-  --muted-foreground: #3282B8;
+  --muted: #163251;
+  --muted-foreground: #7ab4d4;
   --accent: #3282B8;
   --accent-foreground: #BBE1FA;
   --destructive: #e74c3c;
-  --border: rgba(50, 130, 184, 0.2);
-  --input: #0F4C75;
+  --border: rgba(50, 130, 184, 0.35);
+  --input: #163251;
   --ring: #3282B8;
   --chart-1: #BBE1FA;
   --chart-2: #3282B8;
@@ -117,8 +123,14 @@
   --sidebar-primary-foreground: #BBE1FA;
   --sidebar-accent: rgba(50, 130, 184, 0.25);
   --sidebar-accent-foreground: #BBE1FA;
-  --sidebar-border: rgba(50, 130, 184, 0.2);
+  --sidebar-border: rgba(50, 130, 184, 0.3);
   --sidebar-ring: #3282B8;
+  /* Heat map */
+  --heat-0: rgba(187, 225, 250, 0.07);
+  --heat-1: #0e4429;
+  --heat-2: #006d32;
+  --heat-3: #26a641;
+  --heat-4: #39d353;
 }
 
 @layer base {
