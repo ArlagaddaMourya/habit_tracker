@@ -486,23 +486,9 @@ ProjectsDB --> Analytics
 Analytics --> Dashboard
 Analytics --> Recommendations
 ```
-Missing Piece
 
-Most people build:
-
-Notes
-Tasks
-AI Chat
-
-and stop there.
-
-Your differentiator is:
 
 **Knowledge Graph** + Context Engine + Planning Engine
-
-The real value is not "**AI chat.**"
-
-The value is:
 
 Idea
  → Goal
