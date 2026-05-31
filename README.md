@@ -7,14 +7,14 @@ AI-powered platform that helps users capture ideas, create projects, manage goal
 ## Executive Summary
 
 - Using Retrieval-Augmented Generation (RAG) and advanced AI capabilities, the system understands the user's goals, project history, completed work, learning progress, and behavioral patterns. Based on this knowledge, it automatically generates personalized to-do lists, recommends next actions, prioritizes tasks, identifies bottlenecks, and provides intelligent guidance to keep users focused on their objectives.
-- The platform continuously collects metrics across projects, habits, learning activities, productivity, and goal progress, converting raw activity data into actionable insights. AI-powered analytics help users understand performance trends, measure progress, predict goal completion, and discover opportunities for improvement.
+- The platform continuously collects metrics across projects, habits, learning activities, productivity, goal progress and user activities on device, converting raw activity data into actionable insights. AI-powered analytics help users understand performance trends, measure progress, predict goal completion, and discover opportunities for improvement.
 - The result is a comprehensive Personal Growth Operating System that acts as both a productivity platform and an AI-powered personal coach, helping users turn ideas into projects, projects into achievements, and achievements into long-term growth.
 
 ## Teck Stack
 
 - **Frontend**: Tauri, React, Vite, shadcn
 - **Backend**: Python
-- **Database**: SQLite
+- **Database**: Qdrant
 
 ## Architecture Design
 ```mermaid
@@ -447,29 +447,28 @@ This is the most important diagram.
 ```mermaid
 flowchart TB
 
-User --> Notes
 User --> Goals
 User --> Projects
 User --> Tasks
+User --> Notes
 
-Notes --> KnowledgeDB
 Goals --> GoalsDB
 Projects --> ProjectsDB
-Tasks --> TasksDB
 Habits --> HabitDB
+Tasks --> TasksDB
+Notes --> KnowledgeDB
 
 KnowledgeDB --> Embeddings
 Embeddings --> VectorDB
 
+KnowledgeDB --> ContextEngine
 GoalsDB --> ContextEngine
 ProjectsDB --> ContextEngine
 TasksDB --> ContextEngine
 HabitDB --> ContextEngine
-KnowledgeDB --> ContextEngine
-
-ContextEngine --> RAG
 
 VectorDB --> RAG
+ContextEngine --> RAG
 
 RAG --> LLM
 
@@ -480,8 +479,8 @@ LLM --> Recommendations
 Planner --> TasksDB
 
 TasksDB --> Analytics
-HabitDB --> Analytics
 ProjectsDB --> Analytics
+HabitDB --> Analytics
 
 Analytics --> Dashboard
 Analytics --> Recommendations
