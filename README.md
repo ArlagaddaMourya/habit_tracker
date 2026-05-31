@@ -243,27 +243,36 @@ ProjectGenerator --> ProjectService
 
 ProjectService --> ProjectDB[(Projects DB)]
 ```
-### 4. Task & Habit Module
+4. Task, Habit & Activity Module
 
-Purpose: Daily execution.
+Purpose: Daily execution and behavioral tracking.
 
 Data (Task)
-```
 {
   "title":"",
   "priority":"",
   "due_date":"",
   "status":""
 }
-```
 Data (Habit)
-```
 {
   "habit":"",
   "frequency":"",
   "streak":""
 }
-```
+Data (Activity)
+
+Tracks actual device usage and application behavior.
+
+{
+  "application":"",
+  "category":"",
+  "active_time_minutes":"",
+  "background_time_minutes":"",
+  "session_count":"",
+  "date":""
+}
+Flow
 ```mermaid
 flowchart LR
 
@@ -278,8 +287,50 @@ TaskUI --> TaskDB
 TaskDB --> HabitEngine
 
 HabitEngine --> HabitDB[(Habit DB)]
+
+ActivityCollector[Desktop Activity Collector]
+
+ActivityCollector --> ActivityEngine
+
+ActivityEngine --> ActivityDB[(Activity DB)]
 ```
-### 5. Context Engine
+5. Context Engine
+
+This is the heart of the system.
+
+Purpose
+
+Build complete user context for AI planning, coaching and recommendations.
+
+Output
+{
+  "active_goals":[],
+  "active_projects":[],
+  "overdue_tasks":[],
+  "recent_notes":[],
+  "learning_topics":[],
+
+  "daily_activity":{
+    "productive_minutes":0,
+    "distracting_minutes":0,
+    "top_apps":[]
+  },
+
+  "application_usage":[]
+}
+Flow
+```mermaid
+flowchart LR
+
+GoalsDB --> ContextBuilder
+ProjectsDB --> ContextBuilder
+TaskDB --> ContextBuilder
+HabitDB --> ContextBuilder
+ActivityDB --> ContextBuilder
+KnowledgeDB --> ContextBuilder
+
+ContextBuilder --> ContextStore[(Context Snapshot)]
+```
 
 This is the heart of the system.
 
@@ -383,17 +434,33 @@ RecommendationEngine --> LLM
 
 LLM --> Suggestions
 ```
-### 9. Analytics Module
+9. Analytics Module
 
-Purpose: Convert activity into insights.
+Purpose: Convert behavior and activity into actionable insights.
 
 Metrics
+Task completion rate
 
-Completion rate
-Streaks
-Focus time
+Habit streaks
+
 Goal progress
+
 Project velocity
+
+Focus time
+
+Application usage
+
+Active vs Background ratio
+
+Deep work sessions
+
+Context switching frequency
+
+Productive hours
+
+Distraction score
+Flow
 ```mermaid
 flowchart LR
 
@@ -403,11 +470,58 @@ Habits --> Analytics
 
 Projects --> Analytics
 
+ActivityDB --> Analytics
+
 Analytics --> MetricsDB
 
 MetricsDB --> Dashboard
 ```
-### 10. AI Coach Module
+
+### 10.Activity Tracking System
+Purpose
+
+Collect real-world device activity and convert it into behavioral signals for AI.
+
+Data Sources
+Foreground Window
+
+Background Applications
+
+Window Switch Events
+
+Keyboard Activity
+
+Mouse Activity
+
+Application Runtime
+Data Stored
+{
+  "application":"VS Code",
+  "category":"Development",
+  "active_time_minutes":180,
+  "background_time_minutes":45,
+  "session_count":12,
+  "date":"2026-05-31"
+}
+Flow
+```mermaid
+flowchart LR
+
+WindowMonitor --> ActivityCollector
+
+ProcessMonitor --> ActivityCollector
+
+InputMonitor --> ActivityCollector
+
+ActivityCollector --> ActivityEngine
+
+ActivityEngine --> ActivityDB
+
+ActivityDB --> Analytics
+
+ActivityDB --> ContextEngine
+```
+### 11. AI Coach Module
 
 Purpose: User-facing assistant.
 
@@ -441,7 +555,7 @@ LLM --> CoachResponse
 
 CoachResponse --> User
 ```
-### 11. System-Wide Data Flow
+### 12. System-Wide Data Flow
 
 This is the most important diagram.
 ```mermaid
@@ -451,6 +565,8 @@ User --> Goals
 User --> Projects
 User --> Tasks
 User --> Notes
+
+ActivityTracker --> ActivityDB
 
 Goals --> GoalsDB
 Projects --> ProjectsDB
@@ -466,6 +582,7 @@ GoalsDB --> ContextEngine
 ProjectsDB --> ContextEngine
 TasksDB --> ContextEngine
 HabitDB --> ContextEngine
+ActivityDB --> ContextEngine
 
 VectorDB --> RAG
 ContextEngine --> RAG
@@ -481,10 +598,12 @@ Planner --> TasksDB
 TasksDB --> Analytics
 ProjectsDB --> Analytics
 HabitDB --> Analytics
+ActivityDB --> Analytics
 
 Analytics --> Dashboard
 Analytics --> Recommendations
 ```
+
 
 
 **Knowledge Graph** + Context Engine + Planning Engine
@@ -612,6 +731,7 @@ sequenceDiagram
     ContextBuilder->>SQLite: Get Projects
     ContextBuilder->>SQLite: Get Tasks
     ContextBuilder->>SQLite: Get Habits
+    ContextBuilder->>SQLite: Get Activity Data
 
     SQLite-->>ContextBuilder: Context Data
 
