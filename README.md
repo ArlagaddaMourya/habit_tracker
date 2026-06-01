@@ -2,6 +2,7 @@
 
 ## Idea
 
+
 AI-powered platform that helps users capture ideas, create projects, manage goals, and track daily activities in one centralized workspace. Using RAG and AI, it understands user context, generates personalized tasks and action plans, and keeps daily work aligned with long-term objectives. The platform continuously analyzes performance metrics, productivity patterns, and progress to provide actionable insights that accelerate personal and professional growth.
 
 ## Executive Summary
