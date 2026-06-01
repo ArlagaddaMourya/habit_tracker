@@ -15,7 +15,7 @@ AI-powered platform that helps users capture ideas, create projects, manage goal
 
 - **Frontend**: Tauri, React, Vite, shadcn
 - **Backend**: Python
-- **Database**: Qdrant
+- **Database**: Qdrant, Supabase
 
 ## Architecture Design
 ```mermaid
@@ -965,3 +965,205 @@ Capture → Organize → Plan → Execute → Analyze → Learn → Improve
 ```
 
 so users achieve goals faster with less manual planning and decision-making. 
+
+## Architecture Updates
+
+### New Components
+
+#### Memory Service
+
+Purpose: Manage AI memory retrieval and retention.
+
+```text
+Memory Service
+├── Short-Term Memory (Last 30 Days)
+├── Long-Term Memory (Full History)
+└── Memory Retrieval Layer
+```
+
+Flow:
+
+```mermaid
+flowchart LR
+
+ContextBuilder --> MemoryService
+
+MemoryService --> ShortTermMemory
+MemoryService --> LongTermMemory
+
+ShortTermMemory --> Qdrant
+LongTermMemory --> Qdrant
+
+MemoryService --> RAG
+```
+
+---
+
+#### Event Bus
+
+Purpose: Decouple services and support future scaling.
+
+Events:
+
+- TaskCompleted
+- HabitCompleted
+- GoalUpdated
+- NoteCreated
+- ActivityCaptured
+
+```mermaid
+flowchart LR
+
+TaskService --> EventBus
+HabitService --> EventBus
+GoalService --> EventBus
+NoteService --> EventBus
+ActivityService --> EventBus
+
+EventBus --> Analytics
+EventBus --> RecommendationEngine
+EventBus --> NotificationService
+EventBus --> ContextEngine
+```
+
+---
+
+#### Knowledge Graph
+
+Purpose: Maintain relationships between goals, projects, tasks, notes, habits, and activities.
+
+```text
+Goal
+├── Projects
+│   ├── Tasks
+│   ├── Notes
+│   └── Activities
+└── Habits
+```
+
+---
+
+#### Context Snapshot Store
+
+Purpose: Cache generated context for planning and coaching.
+
+```json
+{
+  "snapshot_id": "",
+  "generated_at": "",
+  "active_goals": [],
+  "active_projects": [],
+  "active_tasks": [],
+  "recent_notes": [],
+  "activity_summary": {},
+  "analytics_summary": {}
+}
+```
+
+---
+
+### Storage Layer Update
+
+Replace all SQLite references with:
+
+```text
+Supabase (PostgreSQL)
+```
+
+Storage responsibilities:
+
+```text
+Supabase
+├── Goals
+├── Projects
+├── Tasks
+├── Habits
+├── Activities
+├── Analytics
+├── Context Snapshots
+└── Knowledge Graph Relations
+
+Qdrant
+├── Notes Embeddings
+├── Goal Embeddings
+├── Project Embeddings
+├── Activity Embeddings
+└── Memory Retrieval
+```
+
+---
+
+### Review System
+
+#### Daily Review
+
+- Completed Tasks
+- Missed Tasks
+- Habit Consistency
+- Focus Time
+
+#### Weekly Review
+
+- Goal Progress
+- Project Velocity
+- Habit Trends
+- Productivity Trends
+
+---
+
+### Goal Health Score
+
+```json
+{
+  "goal_id": "",
+  "health_score": 82,
+  "risk": "low"
+}
+```
+
+Calculated using:
+
+- Goal Progress
+- Overdue Tasks
+- Activity Consistency
+- Habit Completion
+
+---
+
+### Project Backlog
+
+```text
+Project
+├── Backlog
+├── Active Tasks
+└── Completed Tasks
+```
+
+AI generates items into Backlog first.
+User promotes backlog items into active execution.
+
+---
+
+### Enhanced Activity Tracking
+
+Track:
+
+- Applications
+- Websites
+- Files
+- IDE Activity
+- Meetings
+- Deep Work Sessions
+
+Store activity against projects instead of only applications.
+
+Example:
+
+```json
+{
+  "entity": "Habit Tracker",
+  "entity_type": "project",
+  "active_minutes": 120
+}
+```
+
