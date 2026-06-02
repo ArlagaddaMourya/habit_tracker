@@ -1,50 +1,107 @@
-# Todo Backlog
+For this project, the backlog should be structured as a **dependency graph**, not by developer.
 
-## Phase 1: Backend & Data
-Priority: High
+Example:
 
-- [P0] Define data models for goals, projects, tasks, notes, and journal entries in SQLite
-- [P0] Create REST API endpoints for CRUD operations on core entities
-- [P1] Add SQLite integration and migrations for the backend
-- [P1] Implement data validation and error handling for API requests
-- [P1] Build initial database seed/data helper for testing and local development
-- [P2] Integrate Qdrant for storing and retrieving embeddings
-- [P2] Add embedding generation workflow for notes and journal content
-- [P2] Create a simple retrieval endpoint to validate Qdrant integration
+```text
+Phase 1
+├── Backend Foundation
+├── Supabase Setup
+├── Qdrant Setup
+└── Database Schema
 
-## Phase 2: UI Generation & Integration
-Priority: High
+Phase 2
+├── Goal Service
+├── Project Service
+├── Task Service
+└── Notes Service
 
-- [P0] Define UI data flows for dashboard, projects, tasks, journal, and notes
-- [P0] Build initial UI pages/components that map to the database entities
-- [P1] Connect frontend to backend API endpoints for reading and writing data
-- [P1] Add form flows for creating and updating projects, tasks, and notes
-- [P1] Implement state updates and list refresh after API actions
-- [P2] Add basic navigation and layout integration across the app
-- [P2] Validate data sync between UI and SQLite-backed backend
+Phase 3
+├── Embedding Pipeline
+├── Retrieval Service
+└── Context Builder
 
-## Phase 3: AI Coach
-Priority: Medium
+Phase 4
+├── Planning Prompt Design
+├── Task Generation
+├── Task Prioritization
+└── Task Persistence
 
-- [P0] Design the chatbot conversation flow for coaching questions and responses
-- [P0] Build a backend service that collects context from goals, tasks, and notes
-- [P1] Integrate a simple AI prompt pipeline using embeddings from Qdrant
-- [P1] Create a UI component for the coach/chat experience
-- [P2] Add question handling and coach response rendering in the frontend
-- [P2] Validate AI responses with sample coaching scenarios
+Phase 5
+├── Calendar Integration
+├── Scheduling Engine
+└── End-to-End Workflow
+```
 
-## Phase 4: Scheduler
-Priority: Medium
+A better backlog would include:
 
-- [P0] Define the scheduler rules and required input data from journal and tasks
-- [P0] Implement daily task generation based on journal reflections and active goals
-- [P1] Add weekly scheduler logic to review progress and propose a plan
-- [P1] Create backend endpoints to run daily and weekly scheduling workflows
-- [P2] Build UI views for daily schedule generation and weekly reflection
-- [P2] Link scheduler output back into tasks and journal workflows
+| ID     | Task                   | Depends On         | Est. |
+| ------ | ---------------------- | ------------------ | ---- |
+| HT-001 | FastAPI Setup          | None               | S    |
+| HT-002 | Supabase Setup         | HT-001             | S    |
+| HT-003 | Database Schema        | HT-002             | M    |
+| HT-004 | Qdrant Setup           | HT-001             | S    |
+| HT-005 | Goal Service           | HT-003             | M    |
+| HT-006 | Project Service        | HT-003             | M    |
+| HT-007 | Task Service           | HT-003             | M    |
+| HT-008 | Notes Service          | HT-003             | M    |
+| HT-009 | Embedding Pipeline     | HT-004, HT-008     | M    |
+| HT-010 | Similarity Search      | HT-009             | M    |
+| HT-011 | Context Builder        | HT-005,006,007,010 | L    |
+| HT-012 | Planning Prompt Design | HT-011             | M    |
+| HT-013 | Task Generation        | HT-012             | L    |
+| HT-014 | Task Prioritization    | HT-013             | M    |
+| HT-015 | Task Persistence       | HT-007,013         | S    |
+| HT-016 | Calendar Abstraction   | HT-015             | M    |
+| HT-017 | Google Calendar        | HT-016             | M    |
+| HT-018 | Outlook Calendar       | HT-016             | M    |
+| HT-019 | Scheduling Engine      | HT-014,016         | L    |
+| HT-020 | Planning Workflow API  | HT-015             | M    |
+| HT-021 | Schedule Workflow API  | HT-017,018,019     | M    |
 
-## Prioritized Task Summary
-1. Phase 1 API and SQLite integration
-2. Phase 2 UI generation and API integration
-3. Phase 3 AI coach pipeline and chat UI
-4. Phase 4 Scheduler workflows and reflection integration
+### Parallel Work Opportunities
+
+```mermaid
+flowchart TD
+
+A[FastAPI Setup]
+
+A --> B[Supabase Setup]
+
+B --> D[Database Schema]
+
+D --> E[Goal Service]
+D --> F[Project Service]
+D --> G[Task Service]
+D --> H[Notes Service]
+
+H --> I
+
+A --> C[Qdrant Setup]
+C --> I[Embedding Pipeline]
+
+
+I --> J[Similarity Search]
+
+E --> K[Context Builder]
+F --> K
+G --> K
+J --> K
+
+K --> L[Task Generation]
+
+
+G --> N[Task Persistence]
+
+L --> N
+
+L --> M[Task Prioritization]
+
+N --> O[Calendar Abstraction]
+
+O --> P[Google Calendar]
+O --> Q[Outlook Calendar]
+
+M --> R[Scheduling Engine]
+
+O --> R
+```
