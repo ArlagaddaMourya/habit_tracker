@@ -1,0 +1,131 @@
+name: Auto-unblock issues when dependencies close
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  unblock:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      repository-projects: write
+
+    steps:
+      - name: Check and unblock dependent issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const closedIssueNumber = context.payload.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            console.log(`Issue #${closedIssueNumber} was closed. Checking for unblocked issues...`);
+
+            // Get all open issues
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100
+            });
+
+            for (const issue of openIssues) {
+              if (!issue.body) continue;
+
+              // Find the "Blocked by" section
+              const blockedByMatch = issue.body.match(/## Blocked by\n([\s\S]*?)(\n---|\n##|$)/);
+              if (!blockedByMatch) continue;
+
+              const blockedBySection = blockedByMatch[1];
+
+              // Extract all referenced issue numbers
+              const blockerNums = [...blockedBySection.matchAll(/- \[[ x]\] #(\d+)/g)]
+                .map(m => parseInt(m[1]));
+
+              if (!blockerNums.includes(closedIssueNumber)) continue;
+
+              console.log(`Issue #${issue.number} references #${closedIssueNumber} as a blocker.`);
+
+              // Check if ALL blockers are now closed
+              let allClosed = true;
+              for (const num of blockerNums) {
+                if (num === closedIssueNumber) continue; // just closed
+                const { data: dep } = await github.rest.issues.get({ owner, repo, issue_number: num });
+                if (dep.state !== 'closed') {
+                  allClosed = false;
+                  console.log(`  #${num} is still open — #${issue.number} remains blocked.`);
+                  break;
+                }
+              }
+
+              if (!allClosed) continue;
+
+              console.log(`All blockers resolved — unblocking #${issue.number}`);
+
+              // Remove "blocked" label if present
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: issue.number, name: 'blocked'
+                });
+              } catch (_) {}
+
+              // Add "ready" label
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: issue.number, labels: ['ready']
+                });
+              } catch (_) {}
+
+              // Move to Ready in Project #4 via GraphQL
+              try {
+                const projectQuery = await github.graphql(`
+                  query {
+                    user(login: "${owner}") {
+                      projectV2(number: 4) {
+                        id
+                        fields(first: 20) {
+                          nodes {
+                            ... on ProjectV2SingleSelectField {
+                              id name
+                              options { id name }
+                            }
+                          }
+                        }
+                        items(first: 100) {
+                          nodes {
+                            id
+                            content { ... on Issue { number } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                `);
+
+                const project = projectQuery.user.projectV2;
+                const statusField = project.fields.nodes.find(f => f.name === 'Status');
+                const readyOption = statusField?.options.find(o => o.name === 'Ready');
+                const item = project.items.nodes.find(i => i.content?.number === issue.number);
+
+                if (project.id && statusField?.id && readyOption?.id && item?.id) {
+                  await github.graphql(`
+                    mutation {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: "${project.id}"
+                        itemId: "${item.id}"
+                        fieldId: "${statusField.id}"
+                        value: { singleSelectOptionId: "${readyOption.id}" }
+                      }) { projectV2Item { id } }
+                    }
+                  `);
+                  console.log(`  Moved #${issue.number} to Ready in Project #4`);
+                }
+              } catch (e) {
+                console.log(`  Could not update project board: ${e.message}`);
+              }
+
+              // Post a comment on the now-unblocked issue
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `🟢 **All blockers resolved.** This issue was unblocked when #${closedIssueNumber} was closed and has been moved to **Ready**.`
+              });
+            }
