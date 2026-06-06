@@ -50,7 +50,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ── Light mode — warm earthy browns ── */
+/* ── Light mode  warm earthy browns ── */
 :root {
   --background: #FCDEC0;
   --foreground: #7D5A50;
@@ -92,7 +92,7 @@
   --sidebar-ring: #FCDEC0;
 }
 
-/* ── Dark mode — cool blues ── */
+/* ── Dark mode  cool blues ── */
 .dark {
   --background: #1B262C;
   --foreground: #BBE1FA;
