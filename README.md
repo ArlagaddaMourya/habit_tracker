@@ -455,13 +455,13 @@ flowchart TB
 
 ## Recommended Build Order
 
-1. **Epic 1 — Foundation**
-2. **Epic 2 — Knowledge Capture**
-3. **Epic 3 — Task Management**
-4. **Epic 4 — Context Engine**
-5. **Epic 5 — RAG Engine**
-6. **Epic 6 — AI Planning Engine**
-7. **Epic 7 — Calendar Integration**
+1. **Epic 1  Foundation**
+2. **Epic 2  Knowledge Capture**
+3. **Epic 3  Task Management**
+4. **Epic 4  Context Engine**
+5. **Epic 5  RAG Engine**
+6. **Epic 6  AI Planning Engine**
+7. **Epic 7  Calendar Integration**
 
 Critical path:
 
