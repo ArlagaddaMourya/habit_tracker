@@ -3,15 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 
 from app.routers.health import router as health_router
+from app.routers.goals import router as goals_router
 
 from app.middleware.error_handler import (
     generic_exception_handler,
     validation_exception_handler
 )
+from app.core.config import settings
 
 app = FastAPI(
-    title="Habit Tracker API",
-    version="0.0.1" #initial version, can be updated as needed
+    title=settings.APP_NAME,
+    version=settings.VERSION
 )
 
 origins = [
@@ -29,6 +31,11 @@ app.add_middleware(
 )
 
 app.include_router(health_router)
+app.include_router(goals_router)
+
+@app.get("/crash")
+async def crash():
+    raise RuntimeError("Crash test")
 
 app.add_exception_handler(
     Exception,
