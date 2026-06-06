@@ -1,4 +1,4 @@
-# Habit Tracker
+# Project-T
 
 ## Idea
 
