@@ -1,4 +1,4 @@
-# Project-T
+# Habit Tracker
 
 ## Idea
 
@@ -482,3 +482,103 @@ Calendar
 ```
 
 The AI Planning Engine is the product's differentiator; everything else exists to provide context and execute the plan.
+
+## Backend
+
+The backend lives in `backend/` and is implemented as a Python `FastAPI` service.
+
+Current backend structure:
+
+- `backend/main.py` — FastAPI application entrypoint with CORS and exception middleware.
+- `backend/app/core/config.py` — environment configuration loaded from `.env`.
+- `backend/app/routers/health.py` — currently exposes `GET /health`.
+- `backend/app/routers/` — scaffolded router modules for `goals`, `projects`, `notes`, `tasks`, `planning`, `search`, and `scheduling`.
+- `backend/app/models/` — domain models for `goal`, `note`, `plan`, `project`, and `task`.
+- `backend/app/services/` — service-layer scaffolding for goals, notes, projects, and tasks.
+- `backend/app/db/` — placeholder database layer.
+
+Note: the repository currently has the API scaffold and health check implemented; most feature routers and database persistence are prepared as placeholders for further backend development.
+
+### Backend setup
+
+1. Install Python 3.11+.
+2. Open a terminal and change into the backend directory:
+   - `cd backend`
+3. Create a virtual environment:
+   - `python -m venv .venv`
+4. Activate the virtual environment:
+   - PowerShell: `.venv\Scripts\Activate.ps1`
+   - CMD: `.venv\Scripts\activate.bat`
+   - Git Bash / WSL: `source .venv/bin/activate`
+5. Install dependencies:
+   - `pip install -r requirements.txt`
+6. Create a `.env` file from the example and fill in the values:
+   - `copy .env.example .env`
+   - Set `APP_NAME`, `VERSION`, `API_HOST`, and `API_PORT`.
+7. Start the backend server:
+   - `uvicorn main:app --reload --host 127.0.0.1 --port 8000`
+
+### Verify the backend
+
+Open your browser or use `curl` to check:
+
+- `http://127.0.0.1:8000/health`
+
+### Run backend tests
+
+From the `backend/` directory, run:
+
+- `pytest`
+
+The backend test suite uses `pytest` and a FastAPI `TestClient` to verify the API entrypoint and the health check endpoint.
+
+## Qdrant Setup
+
+1. Install Docker if not already installed.
+2. Pull and run the Qdrant container:
+   - `docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant`
+3. Verify Qdrant is running:
+   - `docker ps` → should show the Qdrant container
+   - `http://localhost:6333/collections` → should return all three collections
+4. Collections are created automatically when the backend starts:
+   - `notes_embeddings`
+   - `goals_embeddings`
+   - `tasks_embeddings`
+
+> **Note:** If port `6333` is already in use, change `-p 6333:6333` to `-p 6334:6333` and update `QDRANT_URL` in your `.env` file.
+
+---
+
+## Install Dependencies
+
+From the `backend/` directory, run:
+- `pip install -r requirements.txt`
+
+Key packages installed:
+- `fastapi` → API framework
+- `uvicorn` → server that runs FastAPI
+- `qdrant-client` → Python client to talk to Qdrant
+- `python-dotenv` → loads `.env` variables
+- `httpx` → HTTP client used internally by FastAPI
+
+---
+
+## Run Qdrant + Backend
+
+1. Start Qdrant container:
+   - `docker start qdrant`
+2. Change into the backend directory:
+   - `cd backend`
+3. Activate your virtual environment:
+   - PowerShell: `.venv\Scripts\Activate.ps1`
+4. Install dependencies:
+   - `pip install -r requirements.txt`
+5. Start the backend server:
+   - `uvicorn main:app --reload --host 127.0.0.1 --port 8000`
+
+---
+
+## Verify
+
+- `http://127.0.0.1:8000/` → `{"status": "Project-T API is running"}`
+- `http://127.0.0.1:8000/health/qdrant` → `{"qdrant": "ok"}`
