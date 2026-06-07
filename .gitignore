@@ -23,4 +23,23 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment
 .env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Qdrant
+qdrant_storage/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
